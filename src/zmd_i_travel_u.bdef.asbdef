@@ -1,0 +1,65 @@
+unmanaged; // implementation in class zbp_md_i_travel_u unique;
+
+define behavior for zmd_i_travel_u  alias Travel
+
+implementation in class zbp_md_i_travel_u unique
+
+lock master
+//authorization master ( instance )
+etag master Lastchangedat
+{
+  create;
+  update;
+  delete;
+  association _Booking { create; }
+
+  field (read only ) TravelID;
+  field (mandatory ) AgencyID, CustomerID, BeginDate, EndDate;
+
+
+  mapping for /DMO/TRAVEL control zsrap_travel_u
+  {
+    TravelId = travel_id;
+    AgencyId = AGENCY_ID;
+    CustomerId = CUSTOMER_ID;
+    BeginDate = BEGIN_DATE;
+    EndDate = END_DATE;
+    BookingFee = BOOKING_FEE;
+    TotalPrice = TOTAL_PRICE;
+    CurrencyCode = CURRENCY_CODE;
+    Description = DESCRIPTION;
+    Status = STATUS;
+    Createdby = CREATEDBY;
+    Createdat = CREATEDAT;
+    Lastchangedby = LASTCHANGEDBY;
+    Lastchangedat = LASTCHANGEDAT;
+  }
+}
+
+define behavior for zmd_i_booking_u alias Booking
+implementation in class zbp_md_i_booking_u unique
+lock dependent by _Travel
+etag dependent by _Travel
+{
+  update;
+  delete;
+  association _Travel;
+
+  field ( read only ) TravelID, BookingID;
+  field ( mandatory ) BookingDate, CustomerID, CarrierId, ConnectionId, FlightDate;
+   mapping for /DMO/BOOKING control zsrap_booking_u
+  {
+    TravelId = TRAVEL_ID;
+    BookingId = BOOKING_ID;
+    BookingDate = BOOKING_DATE;
+    CustomerId = CUSTOMER_ID;
+    CarrierId = CARRIER_ID;
+    ConnectionId = CONNECTION_ID;
+    FlightDate = FLIGHT_DATE;
+    FlightPrice = FLIGHT_PRICE;
+    CurrencyCode = CURRENCY_CODE;
+  }
+
+
+
+}
